@@ -19,10 +19,10 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_USERNAME = 'YOUR_DOCKERHUB_USERNAME'
+        DOCKERHUB_USERNAME = 'amayaajayan'
         DOCKERHUB_REPOSITORY = 'company-website'
         DOCKERHUB_CREDENTIAL_ID = 'dockerhub-credentials'
-        DEPLOYMENT_SERVER_IP = 'YOUR_DEPLOYMENT_PRIVATE_IP'
+        DEPLOYMENT_SERVER_IP = ' 13.203.217.14'
         DEPLOYMENT_SSH_CREDENTIAL_ID = 'deployment-server-ssh'
         GITHUB_REPOSITORY_URL = 'https://github.com/amayaajayan23-stack/company-website.git'
         IMAGE_NAME = "${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}"
