@@ -19,7 +19,7 @@ pipeline {
     environment {
         DOCKERHUB_USERNAME = 'amayaajayan'
         DOCKERHUB_REPOSITORY = 'company-website'
-        DOCKERHUB_CREDENTIAL_ID = 'dockerhub-credentials'
+        DOCKERHUB_CREDENTIAL_ID = 'dockerhub-login'
 
         DEPLOYMENT_SERVER_IP = '13.203.217.14'
         DEPLOYMENT_SSH_CREDENTIAL_ID = 'deployment-server-ssh'
