@@ -1,5 +1,3 @@
-// Jenkinsfile - Project 02
-
 def runOnDeployServer(String command) {
     withCredentials([sshUserPrivateKey(
         credentialsId: env.DEPLOYMENT_SSH_CREDENTIAL_ID,
@@ -22,9 +20,12 @@ pipeline {
         DOCKERHUB_USERNAME = 'amayaajayan'
         DOCKERHUB_REPOSITORY = 'company-website'
         DOCKERHUB_CREDENTIAL_ID = 'dockerhub-credentials'
-        DEPLOYMENT_SERVER_IP = ' 13.203.217.14'
+
+        DEPLOYMENT_SERVER_IP = '13.203.217.14'
         DEPLOYMENT_SSH_CREDENTIAL_ID = 'deployment-server-ssh'
+
         GITHUB_REPOSITORY_URL = 'https://github.com/amayaajayan23-stack/company-website.git'
+
         IMAGE_NAME = "${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}"
         CONTAINER_NAME = 'company-website'
     }
@@ -32,12 +33,16 @@ pipeline {
     stages {
 
         stage('Build Server Tasks') {
-            agent { label 'build-server' }
+            agent {
+                label 'build-server'
+            }
 
             stages {
+
                 stage('Checkout') {
                     steps {
-                        git branch: 'main', url: "${GITHUB_REPOSITORY_URL}"
+                        git branch: 'main',
+                            url: "${GITHUB_REPOSITORY_URL}"
                     }
                 }
 
@@ -64,9 +69,10 @@ pipeline {
                         sh 'docker push $IMAGE_NAME:$BUILD_NUMBER'
                         sh 'docker push $IMAGE_NAME:latest'
                     }
+
                     post {
                         always {
-                            sh 'docker logout'
+                            sh 'docker logout || true'
                         }
                     }
                 }
@@ -74,13 +80,18 @@ pipeline {
         }
 
         stage('Deployment Server Tasks') {
-            agent { label 'built-in' }
+            agent {
+                label 'built-in'
+            }
 
             stages {
+
                 stage('Connect to Deployment Server') {
                     steps {
                         script {
-                            runOnDeployServer('hostname && docker --version')
+                            runOnDeployServer(
+                                'hostname && docker --version'
+                            )
                         }
                     }
                 }
@@ -88,7 +99,9 @@ pipeline {
                 stage('Pull Latest Image') {
                     steps {
                         script {
-                            runOnDeployServer("docker pull ${IMAGE_NAME}:latest")
+                            runOnDeployServer(
+                                "docker pull ${IMAGE_NAME}:latest"
+                            )
                         }
                     }
                 }
@@ -96,8 +109,13 @@ pipeline {
                 stage('Stop Old Container') {
                     steps {
                         script {
-                            runOnDeployServer("docker stop ${CONTAINER_NAME} || true")
-                            runOnDeployServer("docker rm ${CONTAINER_NAME} || true")
+                            runOnDeployServer(
+                                "docker stop ${CONTAINER_NAME} || true"
+                            )
+
+                            runOnDeployServer(
+                                "docker rm ${CONTAINER_NAME} || true"
+                            )
                         }
                     }
                 }
@@ -107,5 +125,22 @@ pipeline {
                         script {
                             runOnDeployServer(
                                 "docker run -d --name ${CONTAINER_NAME} " +
-                                "--restart unless-stopped -p 9090:80 ${IMAGE_NAME}:latest
+                                "--restart unless-stopped -p 9090:80 ${IMAGE_NAME}:latest"
+                            )
+                        }
+                    }
+                }
 
+                stage('Verify Deployment') {
+                    steps {
+                        script {
+                            runOnDeployServer(
+                                "docker ps"
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
