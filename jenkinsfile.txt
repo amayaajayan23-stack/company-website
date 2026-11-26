@@ -108,3 +108,4 @@ pipeline {
                             runOnDeployServer(
                                 "docker run -d --name ${CONTAINER_NAME} " +
                                 "--restart unless-stopped -p 9090:80 ${IMAGE_NAME}:latest
+
